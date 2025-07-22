@@ -1,0 +1,825 @@
+{
+  "name": "My workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "firstProject",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name"
+            },
+            {
+              "fieldLabel": "Designation",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "WebDeveloper"
+                  },
+                  {
+                    "option": "DataAnalyst"
+                  },
+                  {
+                    "option": "AIEngineer"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.2,
+      "position": [
+        -304,
+        16
+      ],
+      "id": "991b0000-9996-4dac-9e48-52b4d3bfc357",
+      "name": "On form submission",
+      "webhookId": "078f1acd-46a2-4c9c-a56c-291b885a3b47"
+    },
+    {
+      "parameters": {
+        "operation": "create",
+        "base": {
+          "__rl": true,
+          "value": "appgRrL7PlwqQy9vd",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTrPv8Pa4fJzMsH",
+          "mode": "list",
+          "cachedResultName": "firstWorkflow",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd/tblTrPv8Pa4fJzMsH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Designation": "={{ $json.Designation }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "WebDeveloper",
+                  "value": "WebDeveloper"
+                },
+                {
+                  "name": "DataAnalyst",
+                  "value": "DataAnalyst"
+                },
+                {
+                  "name": "AIEngineer",
+                  "value": "AIEngineer"
+                }
+              ],
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        -80,
+        16
+      ],
+      "id": "3b7b6c89-a68d-4404-a798-15d55e8e5799",
+      "name": "Create a record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "enter_airtableAPIkey_here",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.fields.Designation }}",
+                    "rightValue": "WebDeveloper",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "b0bb319a-295a-48ce-a20f-73eedc0e633c"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "7c8a21dc-ab5d-4cc2-94ed-0a8e775c848f",
+                    "leftValue": "={{ $json.fields.Designation }}",
+                    "rightValue": "DataAnalyst",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "78a77023-a7b2-42f8-8d62-876321329468",
+                    "leftValue": "={{ $json.fields.Designation }}",
+                    "rightValue": "AIEngineer",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        144,
+        0
+      ],
+      "id": "1b791462-0e21-40ee-a7e9-59de7b1fae75",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appgRrL7PlwqQy9vd",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTrPv8Pa4fJzMsH",
+          "mode": "list",
+          "cachedResultName": "firstWorkflow",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd/tblTrPv8Pa4fJzMsH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record').item.json.id }}",
+            "avgPackage(LPA)": 10
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "WebDeveloper",
+                  "value": "WebDeveloper"
+                },
+                {
+                  "name": "DataAnalyst",
+                  "value": "DataAnalyst"
+                },
+                {
+                  "name": "AIEngineer",
+                  "value": "AIEngineer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgPackage(LPA)",
+              "displayName": "avgPackage(LPA)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Poem",
+              "displayName": "Poem",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        -176
+      ],
+      "id": "8a4b7d42-b0f7-4396-8154-2e99bab65528",
+      "name": "WebDev Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "enter_airtableAPIkey_here",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appgRrL7PlwqQy9vd",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTrPv8Pa4fJzMsH",
+          "mode": "list",
+          "cachedResultName": "firstWorkflow",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd/tblTrPv8Pa4fJzMsH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record').item.json.id }}",
+            "avgPackage(LPA)": 8
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "WebDeveloper",
+                  "value": "WebDeveloper"
+                },
+                {
+                  "name": "DataAnalyst",
+                  "value": "DataAnalyst"
+                },
+                {
+                  "name": "AIEngineer",
+                  "value": "AIEngineer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgPackage(LPA)",
+              "displayName": "avgPackage(LPA)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Poem",
+              "displayName": "Poem",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        16
+      ],
+      "id": "fd9f5419-a35a-4f80-9b4b-1b704742754c",
+      "name": "DataAnalystUpdate record1",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "enter_airtableAPIkey_here",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appgRrL7PlwqQy9vd",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTrPv8Pa4fJzMsH",
+          "mode": "list",
+          "cachedResultName": "firstWorkflow",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd/tblTrPv8Pa4fJzMsH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record').item.json.id }}",
+            "avgPackage(LPA)": 12
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "WebDeveloper",
+                  "value": "WebDeveloper"
+                },
+                {
+                  "name": "DataAnalyst",
+                  "value": "DataAnalyst"
+                },
+                {
+                  "name": "AIEngineer",
+                  "value": "AIEngineer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgPackage(LPA)",
+              "displayName": "avgPackage(LPA)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "Poem",
+              "displayName": "Poem",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        368,
+        208
+      ],
+      "id": "aeeeefc0-19dc-4245-a1f1-f89215cb5360",
+      "name": "DataAnalystUpdate record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "enter_airtableAPIkey_here",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You will get user input as specified below-\nUser Name : {{ $json.fields.Name }}\nJob Role : {{ $json.fields.Designation }}\nGenerate a quote for the specified person using the fields given above.\nThe quote should not bemore than 2 lines.\n",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.1,
+      "position": [
+        592,
+        16
+      ],
+      "id": "33cb7c5d-255d-4b8d-9a36-0b738664ce2a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        688,
+        240
+      ],
+      "id": "306f9263-5842-4784-9774-43e1d8b24abb",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "enter_GoogleGeminiAPIkey_here",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "base": {
+          "__rl": true,
+          "value": "appgRrL7PlwqQy9vd",
+          "mode": "list",
+          "cachedResultName": "N8N",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd"
+        },
+        "table": {
+          "__rl": true,
+          "value": "tblTrPv8Pa4fJzMsH",
+          "mode": "list",
+          "cachedResultName": "firstWorkflow",
+          "cachedResultUrl": "https://airtable.com/appgRrL7PlwqQy9vd/tblTrPv8Pa4fJzMsH"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "id": "={{ $('Create a record').item.json.id }}",
+            "Quote": "={{ $json.output }}"
+          },
+          "matchingColumns": [
+            "id"
+          ],
+          "schema": [
+            {
+              "id": "id",
+              "displayName": "id",
+              "required": false,
+              "defaultMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": true,
+              "removed": false
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Designation",
+              "displayName": "Designation",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "options",
+              "options": [
+                {
+                  "name": "WebDeveloper",
+                  "value": "WebDeveloper"
+                },
+                {
+                  "name": "DataAnalyst",
+                  "value": "DataAnalyst"
+                },
+                {
+                  "name": "AIEngineer",
+                  "value": "AIEngineer"
+                }
+              ],
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "avgPackage(LPA)",
+              "displayName": "avgPackage(LPA)",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "number",
+              "readOnly": false,
+              "removed": true
+            },
+            {
+              "id": "Quote",
+              "displayName": "Quote",
+              "required": false,
+              "defaultMatch": false,
+              "canBeUsedToMatch": true,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.airtable",
+      "typeVersion": 2.1,
+      "position": [
+        944,
+        16
+      ],
+      "id": "108338f6-9a83-46ae-bdd8-a7c7b4f7eb7c",
+      "name": "Update record",
+      "credentials": {
+        "airtableTokenApi": {
+          "id": "enter_airtableAPIkey_here",
+          "name": "Airtable Personal Access Token account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Create a record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a record": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "WebDev Update record",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DataAnalystUpdate record1",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "DataAnalystUpdate record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "WebDev Update record": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DataAnalystUpdate record1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "DataAnalystUpdate record": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Update record",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "955638ce-6c2c-4554-9ad2-cba0c656ef57",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8bdd380628b9ee9172a784169c0c4d1ef0d7ed88985fee0c5c14933a4c57305"
+  },
+  "id": "hd6q5bzVF77hlwnD",
+  "tags": []
+}
