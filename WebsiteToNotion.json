@@ -1,0 +1,316 @@
+{
+  "name": "WebsiteToNotion",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -240,
+        -624
+      ],
+      "id": "4b2477f0-367f-45be-ac33-c81dc4731665",
+      "name": "When chat message received",
+      "webhookId": "bbf55732-795f-4f1a-acab-2cef99292bc8"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.0-flash",
+        "options": {
+          "temperature": 0
+        }
+      },
+      "id": "a4db1953-83ec-4ca5-97ed-72645015c965",
+      "name": "Gemini 2.5 PRO",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "position": [
+        -16,
+        -400
+      ],
+      "typeVersion": 1,
+      "credentials": {
+        "googlePalmApi": {
+          "id": "Google Gemini API Key",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "toolDescription": "website_scraper: Scrape a website given it's URL",
+        "method": "POST",
+        "url": "={{ $json.chatInput }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"url\": \"{url}\",\n  \"gotoOptions\": {\n    \"waitUntil\": \"networkidle0\"\n  }\n} ",
+        "placeholderDefinitions": {
+          "values": [
+            {
+              "name": "url",
+              "description": "the URL of the website to scrape",
+              "type": "string"
+            }
+          ]
+        }
+      },
+      "id": "df9c6d00-9b0d-417e-a0e3-e9f590f57f3e",
+      "name": "website_scraper",
+      "type": "@n8n/n8n-nodes-langchain.toolHttpRequest",
+      "position": [
+        240,
+        -400
+      ],
+      "typeVersion": 1.1
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "save_to_notion: This tool saves the information to the Notion database.",
+        "resource": "databasePage",
+        "databaseId": {
+          "__rl": true,
+          "value": "23fd886f-366d-80e7-9b68-e634341d0e31",
+          "mode": "list",
+          "cachedResultName": "WebScrapingDB",
+          "cachedResultUrl": "https://www.notion.so/23fd886f366d80e79b68e634341d0e31"
+        },
+        "title": "={{ $fromAI('Title', `The original title of the article!`, 'string') }}",
+        "propertiesUi": {
+          "propertyValues": [
+            {
+              "key": "Description|rich_text",
+              "textContent": "={{ $fromAI('Description', `Short description of what the article is about`, 'string') }}"
+            },
+            {
+              "key": "Tags|rich_text",
+              "textContent": "={{ $fromAI('Tags', `General (generic) tags that would be relevant for this article, such as technologies used / talked about, programming language, techniques and so on! Keep them generic not ultra specific.`, 'string') }}"
+            },
+            {
+              "key": "Publication Date|date",
+              "date": "={{ $fromAI('publication_date', `The date this article was published if available on the page.`, 'string') }}"
+            },
+            {
+              "key": "URL|url",
+              "urlValue": "=URL\n{{ $fromAI('URL', `The url where this article resides.`, 'string') }}"
+            }
+          ]
+        },
+        "blockUi": {
+          "blockValues": [
+            {
+              "type": "heading_1",
+              "textContent": "={{ $fromAI('Title', `The original title of the article!`, 'string') }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Quick Summary (TL;DR)"
+            },
+            {
+              "textContent": "={{ $fromAI('Summary', `1-3 sentence summary capturing the absolute essence of this article`, 'string') }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "={{ $fromAI('objective_title', `short title for the Problem Addressed / Objective section`, 'string') }}"
+            },
+            {
+              "textContent": "={{ $fromAI('objective_text', `description of the core problem, question, or goal the article tackles. Keep it focused.`, 'string') }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "={{ $fromAI('concepts_title', `title for the Key Concepts / Solution Overview section`, 'string') }}"
+            },
+            {
+              "textContent": "={{ $fromAI('concepts_text', `Explain the main ideas, theories, or the high-level approach of the solution presented.`, 'string') }}"
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Technologies & Libraries"
+            },
+            {
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $fromAI('technologies_list', `A bulleted list of Technologies, Libraries, Techniques and Patterns Mentioned in the article along with a short description for each`, 'string') }}",
+                    "annotationUi": {}
+                  }
+                ]
+              }
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Core Code Snippets"
+            },
+            {
+              "textContent": "={{ $fromAI('important_code_snippet_description', `1-2 sentences of context explaining what this snippet does or why it's important.`, 'string') }}"
+            },
+            {
+              "richText": true,
+              "text": {
+                "text": [
+                  {
+                    "text": "={{ $fromAI('important_code_snippet', `The actual code snippet. The AI must ensure this block doesn't exceed 2000 chars. If a crucial snippet is longer, the AI should either prioritize a key part of it or potentially link to the source if available. Specify the language (e.g., python, javascript) for syntax highlighting.`, 'string') }}",
+                    "annotationUi": {
+                      "code": true
+                    }
+                  }
+                ]
+              }
+            },
+            {
+              "type": "heading_2",
+              "textContent": "Key Takeaways & Conclusion"
+            },
+            {
+              "textContent": "={{ $fromAI('conclusions', `A bulleted item list that summarizes the main conclusions, results, or actionable insights from the article.`, 'string') }}"
+            }
+          ]
+        },
+        "options": {
+          "icon": "={{ $fromAI('Icon', `Pick an emoji that would be good as an icon for this article. Remember, this should be a single emoji`, 'string') }}"
+        }
+      },
+      "id": "66f45dce-13dc-49d7-a71d-5cb1b8a751e1",
+      "name": "save_to_notion",
+      "type": "n8n-nodes-base.notionTool",
+      "position": [
+        112,
+        -400
+      ],
+      "notesInFlow": false,
+      "typeVersion": 2.2,
+      "credentials": {
+        "notionApi": {
+          "id": "Notion API Key",
+          "name": "Notion account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "guildId": {
+          "__rl": true,
+          "mode": "list",
+          "value": "1207038600731168821",
+          "cachedResultUrl": "https://discord.com/channels/1207038600731168821",
+          "cachedResultName": "Let's Talk Dev Community"
+        },
+        "channelId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "content": "={{ $fromAI('Message', `Start with an :information_source: emoji. Then tell the chat that the action has been completed.`, 'string') }}",
+        "options": {},
+        "embeds": {
+          "values": [
+            {
+              "description": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Description', ``, 'string') }}",
+              "title": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Title', ``, 'string') }}",
+              "url": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('URL', ``, 'string') }}"
+            }
+          ]
+        }
+      },
+      "id": "fa72c50c-eb6b-40a2-af80-b5b696d034b9",
+      "name": "discord_notification",
+      "type": "n8n-nodes-base.discordTool",
+      "position": [
+        1168,
+        -448
+      ],
+      "webhookId": "617fa695-5a0a-464e-b3f2-bcd77ab5965b",
+      "typeVersion": 2,
+      "credentials": {
+        "discordBotApi": {
+          "id": "Discord  API Key",
+          "name": "Discord Bot account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "=You will receive a URL. Your task is to:\n1. use the website_scraper to scrape the provided URL!\n2. use the save_to_notion tool to save the information to Notion.\n3. use the discord_notification tool to send a notification that the research is available, along with the notion URL of the created page.\n\n## Tools\nThe save_to_notion tool expects the following parameters:\n* title: the original title of the article\n* description: short description of what the article is about\n* url: the URL where this article resides.\n* tags: general (generic) tags that would be relevant for this article, such as technologies used / talked about, programming language, techniques and so on! Keep them generic not ultra specific.\n* publication_date: The date this article was published if available on the page.\n* summary: 1-3 sentence summary capturing the absolute essence of this article\n* objective_title: short title for the section about the problem addressed / objective\n* objective_text: description of the core problem, question, or goal the article tackles. Keep it focused.\n* concepts_title: title for the Key Concepts / Solution Overview section\n* concepts_text: explain the main ideas, theories, or the high-level approach of the solution presented. \n* technologies_list: A bulleted list of Technologies, Libraries, Techniques and Patterns Mentioned in the article along with a short description for each.\n* important_code_snippet_description: Description for The most important code snippet in the article. 1-2 sentences of context explaining what this snippet does or why it's important.\n* important_code_snippet: The actual code snippet. The AI must ensure this block doesn't exceed 2000 chars. If a crucial snippet is longer, the AI should either prioritize a key part of it or potentially link to the source if available. Specify the language (e.g., python, javascript) for syntax highlighting.\n* conclusions: A bulleted item list that summarizes the main conclusions, results, or actionable insights from the article.\n* icon: an emoji that represents this article best!\n\nRemember you always have to scrape the website using the website_scraper tool. Don't try to summarize without scraping!\nAlways save the results to notion using the save_to_notion tool. Only execute this tool once!"
+        }
+      },
+      "id": "ff0cabdb-0bac-4834-832b-ee3f664a775c",
+      "name": "Save Article To Notion",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "position": [
+        80,
+        -624
+      ],
+      "executeOnce": true,
+      "notesInFlow": false,
+      "typeVersion": 1.7,
+      "onError": "continueErrorOutput"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "Save Article To Notion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini 2.5 PRO": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Save Article To Notion",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "save_to_notion": {
+      "ai_tool": [
+        [
+          {
+            "node": "Save Article To Notion",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "website_scraper": {
+      "ai_tool": [
+        [
+          {
+            "node": "Save Article To Notion",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "discord_notification": {
+      "ai_tool": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "8a296223-b45d-443b-99fd-a0017a126811",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "b8bdd380628b9ee9172a784169c0c4d1ef0d7ed88985fee0c5c14933a4c57305"
+  },
+  "id": "tqxg296O1bp4AsAO",
+  "tags": []
+}
